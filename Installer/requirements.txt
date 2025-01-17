@@ -1,0 +1,5 @@
+pypdf
+docx2pdf
+python-docx
+watchdog
+pillow
