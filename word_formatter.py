@@ -885,9 +885,11 @@ def main(fileName, filepath, template_path, output_folder):
         for p in raw.paragraphs:
             if p.text != '':
                 para.append(p.text)
-        
-        add_h1(doc, f"1. {h1[h1_index]}")
-        h1_index+=1
+        try:
+            add_h1(doc, f"1. {h1[h1_index]}")
+            h1_index+=1
+        except:
+            pass
         add_picture_inline(doc, f"{folder_path}/images/{pic_index}", width=Inches(6), height=Inches(4))
         pic_index+=1
         
@@ -907,7 +909,9 @@ def main(fileName, filepath, template_path, output_folder):
                 
                 # Copy the table and add the picture
                 copy_table(doc, raw.tables[tableIndex])
+                print(f"PV-Anlage table copied - {tableIndex}")
                 tableIndex += 1
+
                 add_picture_inline(doc, f"{folder_path}/images/{pic_index}", width=Inches(6), height=Inches(4))
                 
                 # Increment the picture index
@@ -919,31 +923,36 @@ def main(fileName, filepath, template_path, output_folder):
             add_h2(doc, "Ertragsprognose")
             add_h3(doc, "Ertragsprognose")
             copy_table(doc, raw.tables[tableIndex])
+            print(f"Ertragsprognose table copied - {tableIndex}")
             # print(tableIndex)
             tableIndex+=1
 
         # ----------------------------------------
         doc.add_page_break()
         # ----------------------------------------
-
-        add_h1(doc, f"2. {h1[h1_index]}")
-        h1_index+=1
-        
+        try:
+            add_h1(doc, f"2. {h1[h1_index]}")
+            h1_index+=1
+        except:
+            pass
         if "Überblick" in h2 :
             add_h2(doc, "Überblick")
 
             add_h3(doc, "Anlagendaten")
             copy_table(doc, raw.tables[tableIndex])
+            print(f"Anlagendaten table copied - {tableIndex}")
             # print(tableIndex)
             tableIndex+=1
             
             add_h3(doc, "Klimadaten")
             copy_table(doc, raw.tables[tableIndex])
+            print(f"Klimadaten table copied - {tableIndex}")
             # print(tableIndex)
             tableIndex+=1
             
             add_h3(doc, "Verbrauch")
             copy_table(doc, raw.tables[tableIndex])
+            print(f"Verbrauch table copied - {tableIndex}")
             # print(tableIndex)
             tableIndex+=1
 
@@ -954,15 +963,15 @@ def main(fileName, filepath, template_path, output_folder):
         if "Modulflächen" in h2 :
             doc.add_page_break()
             add_h2(doc, "Modulflächen")
-            
             k = para.index("Modulflächen")
+            
             for i in range(k+1, len(para), 3):
                 if 'Modulfläche' in para[i]:
+                    
                     add_h2(doc, para[i])
                     add_h3(doc, para[i+1])
-                    
                     copy_table(doc, raw.tables[tableIndex])
-                    # # print(tableIndex)
+                    print(f"Modulfläche {i} table copied - {tableIndex}")
                     tableIndex+=1
                     doc.add_paragraph("")
                     add_picture_inline(doc, f"{folder_path}/images/{pic_index}", width=Inches(6), height=Inches(4))
@@ -992,6 +1001,7 @@ def main(fileName, filepath, template_path, output_folder):
 
                     # Add the associated table
                     copy_table(doc, raw.tables[tableIndex])
+                    print(f"Verschaltung {i} table copied - {tableIndex}")
                     tableIndex += 1
                     
                     # Check for another table under the same subheading
@@ -1001,6 +1011,7 @@ def main(fileName, filepath, template_path, output_folder):
                             # Process additional content if needed
                             # Assume the next table belongs to the same subheading
                             copy_table(doc, raw.tables[tableIndex])
+                            print(f"Wechselrichter {i} table copied - {tableIndex}")
                             tableIndex += 1
 
                 # Stop when reaching the next major section or the end of the document
@@ -1014,24 +1025,32 @@ def main(fileName, filepath, template_path, output_folder):
             i = para.index("AC-Netz")
             add_h3(doc, para[i+1])
             copy_table(doc, raw.tables[tableIndex])
+            print(f"AC-Netz table copied - {tableIndex}")
             # # print(tableIndex)
             tableIndex+=1
+
 
         if "Batteriesysteme" in h2 :
             add_h2(doc, "Batteriesysteme")
             i = para.index("Batteriesysteme")
-            add_h3(doc, para[i+1])
-            copy_table(doc, raw.tables[tableIndex])
-            # print(tableIndex)
-            tableIndex+=1
+            for k in range(i+1, len(para), 1):
+                if 'Batteriesystem' in para[k]:
+                    add_h3(doc, para[k])
+                    copy_table(doc, raw.tables[tableIndex])
+                    print(f"Batteriesysteme table copied - {tableIndex}")
+                    tableIndex+=1
+                else:
+                    break
+          
 
         # ----------------------------------------
         doc.add_page_break()
         # ----------------------------------------
-
-        add_h1(doc, f"3. {h1[h1_index]}")
-        h1_index+=1
-        
+        try:
+            add_h1(doc, f"3. {h1[h1_index]}")
+            h1_index+=1
+        except:
+            pass
         if "Ergebnisse Gesamtanlage" in h2 :
             add_h2(doc, "Ergebnisse Gesamtanlage")
             i = para.index("Ergebnisse Gesamtanlage")
@@ -1040,6 +1059,7 @@ def main(fileName, filepath, template_path, output_folder):
                 add_h3(doc, "PV-Anlage")
                 # here index represent table no of the raw document
                 copy_table(doc, raw.tables[tableIndex])
+                print(f"PV-Anlage table copied - {tableIndex}")
                 # print(tableIndex)
                 # index represent table no of the output document
                 try:
@@ -1055,6 +1075,7 @@ def main(fileName, filepath, template_path, output_folder):
                 add_h3(doc, "Verbraucher")
                 # here index represent table no of the raw document
                 copy_table(doc, raw.tables[tableIndex])
+                print(f"Verbraucher table copied - {tableIndex}")
                 # print(tableIndex)
 
                 # index represent table no of the output document
@@ -1069,6 +1090,7 @@ def main(fileName, filepath, template_path, output_folder):
             if "Batteriesystem" in para:
                 add_h3(doc, "Batteriesystem")
                 copy_table(doc, raw.tables[tableIndex])
+                print(f"Batteriesystem table copied - {tableIndex}")
                 # print(tableIndex)
                 tableIndex+=1
                 i+=1
@@ -1076,6 +1098,7 @@ def main(fileName, filepath, template_path, output_folder):
             if "Autarkiegrad" in para:
                 add_h3(doc, "Autarkiegrad")
                 copy_table(doc, raw.tables[tableIndex])
+                print(f"Autarkiegrad table copied - {tableIndex}")
                 # print(tableIndex)
                 tableIndex+=1
                 i+=1
@@ -1093,71 +1116,91 @@ def main(fileName, filepath, template_path, output_folder):
         if "Ergebnisse pro Modulfläche" in h2 :
             add_h2(doc, "Ergebnisse pro Modulfläche")
             i = para.index("Ergebnisse pro Modulfläche")
-            
-            if para[i+1] != h1[h1_index]:
-                add_h3(doc, para[i+1])
-                copy_table(doc, raw.tables[tableIndex])
-                # print(tableIndex)
-                tableIndex+=1
-                i+=1
+            while (para[i+1] != h1[h1_index]):
+                try:
+                    add_h3(doc, para[i+1])
+                    copy_table(doc, raw.tables[tableIndex])
+                    print(f"Ergebnisse pro Modulfläche {i} table copied - {tableIndex}")
+                    # print(tableIndex)
+                    tableIndex+=1
+                    i+=1
+                except:
+                    break
 
-            if para[i+1] != h1[h1_index]:
-                add_h3(doc, para[i+1])
-                copy_table(doc, raw.tables[tableIndex])
-                # print(tableIndex)
-                tableIndex+=1
-
-        add_h1(doc, f"4. {h1[h1_index]}")
-        h1_index+=1
+        try:
+            add_h1(doc, f"4. {h1[h1_index]}")
+            h1_index+=1
+        except:
+            pass
         
+        if "Energiebilanz Sankey-Diagramm" in h1 :
+            add_h2(doc, "Energiebilanz Sankey-Diagramm")
+            try:
+                add_picture_inline(doc, f"{folder_path}/images/{pic_index}", width=Inches(5.5), height=Inches(6.5))
+                pic_index+=1
+                i+=1
+            except:
+                pass
+
         if "Datenblatt PV-Modul" in h2 :
             add_h2(doc, "Datenblatt PV-Modul")
             i = para.index("Datenblatt PV-Modul")
-            add_h3(doc, para[i+1])
-            copy_table(doc, raw.tables[tableIndex])
-            # print(tableIndex)
-            tableIndex+=1
+            for k in range(i+1, len(para), 1):
+                if 'PV-Modul' in para[k]:
+                    add_h3(doc, para[k])
+                    copy_table(doc, raw.tables[tableIndex])
+                    print(f"Datenblatt PV-Modul pro Modulfläche {k} table copied - {tableIndex}")
+                    tableIndex+=1
+                else:
+                    break
 
         if "Datenblatt Wechselrichter" in h2 :
             add_h2(doc, "Datenblatt Wechselrichter")
             i = para.index("Datenblatt Wechselrichter")
-            
-            if para[i+1].startswith("Wechselrichter:"):
+            while (not para[i+1].startswith("Datenblatt Batteriesystem") and not para[i+1].startswith("Datenblatt Batterie") and not para[i+1].startswith("Schaltplan") and not para[i+1].startswith("Übersichtsplan") and not para[i+1].startswith("Bemaßungsplan") and not para[i+1].startswith("Strangplan") and not para[i+1].startswith("Stückliste")):
+                try:
+                    add_h3(doc, para[i+1])
+                    copy_table(doc, raw.tables[tableIndex])
+                    print(f"Datenblatt Wechselrichter table copied - {tableIndex}")
+                    tableIndex+=1
+                    i+=1
+                except:
+                    break
+
+        
+        if "Datenblatt Batteriesystem" in h2 :
+            add_h2(doc, "Datenblatt Batteriesystem")
+            i = para.index("Datenblatt Batteriesystem")
+            while (para[i+1].startswith("Batteriesystem")):
                 add_h3(doc, para[i+1])
                 copy_table(doc, raw.tables[tableIndex])
                 # print(tableIndex)
                 tableIndex+=1
                 i+=1
 
-            if para[i+1].startswith("Wechselrichter:"):
-                add_h3(doc, para[i+1])
-                copy_table(doc, raw.tables[tableIndex])
-                # print(tableIndex)
-                tableIndex+=1
-
-        if "Datenblatt Batteriesystem" in h2 :
-            add_h2(doc, "Datenblatt Batteriesystem")
-            i = para.index("Datenblatt Batteriesystem")
-            add_h3(doc, para[i+1])
-            copy_table(doc, raw.tables[tableIndex])
-            # print(tableIndex)
-            tableIndex+=1
 
         if "Datenblatt Batterie" in h2 :
             add_h2(doc, "Datenblatt Batterie")
             i = para.index("Datenblatt Batterie")
-            add_h3(doc, para[i+1])
-            # print(tableIndex)
-            copy_table(doc, raw.tables[tableIndex])
-            tableIndex+=1
+            try:
+                while (para[i+1] != h1[h1_index]):
+                    add_h3(doc, para[i+1])
+                    copy_table(doc, raw.tables[tableIndex])
+                    # print(tableIndex)
+                    tableIndex+=1
+                    i+=1
+            except:
+                print(f'Total number of tables: {len(raw.tables)})')
+                print(f'table index: {tableIndex}')
 
         # ----------------------------------------
         doc.add_page_break()
         # ----------------------------------------
-
-        add_h1(doc, f"5. {h1[h1_index]}")
-        h1_index+=1
-
+        try:
+            add_h1(doc, f"5. {h1[h1_index]}")
+            h1_index+=1
+        except:
+            pass
         if "Schaltplan" in h2 :
             add_h2(doc, "Schaltplan")
             i = para.index("Schaltplan")
@@ -1206,9 +1249,17 @@ def main(fileName, filepath, template_path, output_folder):
             add_h2(doc, "Stückliste")
             i = para.index("Stückliste")
             add_h3(doc, para[i+1])
-            copy_table(doc, raw.tables[tableIndex])
             # print(tableIndex)
-            tableIndex+=1
+        if "Umgebung" in h2:
+            add_h2(doc, "Umgebung")
+            i = para.index("Umgebung")
+            while True:
+                if i+1 <= len(para) : 
+                    add_picture_inline(doc, f"{folder_path}/images/{2}", width=Inches(5.5), height=Inches(3.5))
+                    i+=1
+                    break
+                else: 
+                    break
             
         # ----------------------------------------
         doc.add_page_break()
@@ -1283,11 +1334,12 @@ def main(fileName, filepath, template_path, output_folder):
 if __name__=="__main__":
     
     #Deployment -- comment this section when testing
+    #'''
     WATCH_FOLDER = 'D:/OneDrive/Office/OneDrive - Solardach24 GmbH/Intranet-Dokumente/10-Verkauf/00-Administration/DocGenerator/input/'
     TEMPLATE_PATH = 'assets/template.docx'
     OUTPUT_FOLDER = 'D:/OneDrive/Office/OneDrive - Solardach24 GmbH/Intranet-Dokumente/10-Verkauf/00-Administration/DocGenerator/output/'
     INVALID_FOLDER = 'D:/OneDrive/Office/OneDrive - Solardach24 GmbH/Intranet-Dokumente/10-Verkauf/00-Administration/DocGenerator/invalid/'
-    
+    #'''
     '''
     #Testing -- comment this section when testing   
     WATCH_FOLDER = 'input/'
@@ -1305,3 +1357,5 @@ if __name__=="__main__":
         else:
             pass
     set_(WATCH_FOLDER, TEMPLATE_PATH, OUTPUT_FOLDER)
+
+    
