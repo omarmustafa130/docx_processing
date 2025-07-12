@@ -776,8 +776,15 @@ def extract_para_style(raw, para_style):
     return para
 
 def process_files(queue, template_path, output_folder):
+    global flag
     while True:
         file_name, src_path = queue.get()
+        if file_name[0]=='0':
+            flag = 0
+            print('filename starts with 0')
+        else:
+            flag = 1
+            print('filename does not start with 0')
         try:
             main(file_name, src_path, template_path, output_folder)
         finally:
@@ -842,7 +849,7 @@ def remove_prefix_from_title(doc):
             break
 
 def main(fileName, filepath, template_path, output_folder):
-    global count, verb
+    global count, verb, flag
     global INVALID_FOLDER
     try:
         print(f'New document added: {fileName}')
@@ -1077,13 +1084,16 @@ def main(fileName, filepath, template_path, output_folder):
                 copy_table(doc, raw.tables[tableIndex])
                 print(f"Verbraucher table copied - {tableIndex}")
                 # print(tableIndex)
-
-                # index represent table no of the output document
-                try:
-                    format_table_with_picture(doc, tableIndex-1, f"{folder_path}/images/{pic_index}.png")
-                except: 
-                    format_table_with_picture(doc, tableIndex-1, f"{folder_path}/images/{pic_index}.jpg")
-                pic_index+=1
+                if flag == 0:
+                    pass
+                else:
+                    # index represent table no of the output document
+                    try:
+                        format_table_with_picture(doc, tableIndex-1, f"{folder_path}/images/{pic_index}.png")
+                        
+                    except: 
+                        format_table_with_picture(doc, tableIndex-1, f"{folder_path}/images/{pic_index}.jpg")
+                    pic_index+=1
                 tableIndex+=1
                 i+=1
             
